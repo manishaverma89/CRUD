@@ -1,9 +1,7 @@
-<!-- INSERT INTO `notes` (`sno`, `title`, `description`, `timestamp`) VALUES (NULL, 'buy books', 'hi manisha go and buy this book', CURRENT_TIMESTAMP); -->
-
 <!-- Connection To Database -->
 <?php
       
-    
+ $insert = false;   
 // echo "Welcome!! we're ready to get connected to a Database<br><br>";
 // Ways to connect to a MySql Database
 // we are using MySqli extension
@@ -21,24 +19,44 @@ $conn = mysqli_connect($servername,$username,$password,$dbname);
 if (!$conn){
    die("sorry we failed to connect ". mysqli_connect_error());
 }
-else{
-echo "Great!! connection was successfull";
-}
+// else{
+// echo "Great!! connection was successfull";
+// }
 
 
  //  select query
- $sql = "SELECT * FROM notes";
- $result = mysqli_query($conn,$sql);
+//  $sql = "SELECT * FROM notes";
+//  $result = mysqli_query($conn,$sql);
 
+//  if ($result){
+//  echo "successfull";
+//  }
+//  else {
+//    echo "not successfull:-->" . mysqli_error($conn);
+//  }
+
+
+//  INSERTION
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+  $title = $_POST['title'];
+  $desc =  $_POST['desc'];
+  // $sql = "INSERT INTO `notes` (`title`,`description`) VALUES ($title , $desc)";
+     $sql = "INSERT INTO `notes` (`title`,`description`) VALUES ('$title', '$desc')" ;
+     $result = mysqli_query($conn,$sql);
  if ($result){
-   echo "successfull";
+  //  echo "successfull";
+  $insert = true;
  }
  else {
    echo "not successfull:-->" . mysqli_error($conn);
  }
+//  echo " hii Insertion is working";
 
+}
 
- mysqli_close($conn);
+//  mysqli_close($conn);
  ?>
  
 
@@ -85,10 +103,20 @@ echo "Great!! connection was successfull";
         </div>
       </nav>
 
+      <!-- Alert  -->
+      
+        <?php if($insert){   ?>
+        <?php echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
+         <strong>Success!</strong> Your Note has been added successfully.
+         <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+       </div>"; ?>
+       <?php }  ?>
+      
+
       <!-- FORM -->
-      <div class="container my-5">
+      <div class="container my-5  ">
           <h2>Add a Note</h2>
-        <form>
+        <form action="/crud/index.php" method="post">
             <div class="mb-3">
               <label for="title" class="form-label">Note Title</label>
               <input type="text" class="form-control" placeholder="add a note title here"id="title"  name="title" aria-describedby="emailHelp">
@@ -121,31 +149,33 @@ echo "Great!! connection was successfull";
     </tr>
   
   </thead>
- 
+ <tbody>
 
-  
 
-<!-- // PHP Code -->
-      
-      
-      <?php while ($row = mysqli_fetch_assoc($result)){  ?>
+  <?php 
+    $sql = "SELECT * FROM notes";
+    $result = mysqli_query($conn,$sql);
+  ?>
 
-       <tr>
-         <td> <?php echo $row['sno'];  ?> </td>
-         <td> <?php echo $row['title']; ?> </td>
-         <td> <?php echo $row['description']; ?> </td>
-         <td>  @Actions </td>
-       </tr>
-        
-      <?php }  ?>
-      
-      
-  </tbody>
-  
- </table>
-                 
-     </div>
+       <?php while ($row = mysqli_fetch_assoc($result)){  ?>
+        <tr>
+          <td> <?php echo $row['sno'];  ?> </td>
+          <td> <?php echo $row['title']; ?> </td>
+          <td> <?php echo $row['description']; ?> </td>
+          <td>  @Actions </td>
+        </tr>
          
+       <?php   }   ?>
+      
+      </tbody>
+      
+     </table>
+                     
+         </div>
+             
+
+      
+      
   
 <!-- Optional JavaScript; choose one of the two! -->
 
